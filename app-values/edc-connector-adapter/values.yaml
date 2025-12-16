@@ -1,0 +1,31 @@
+# specify 'dev' for dev environment or 'int' for integration environment
+domainUrlEnvIdentifier: int
+
+serviceAccount:
+   # optional service account prefix
+   prefix:
+
+openTelemetry:
+  # disables the OpenTelemetry SDK (true on local dev)   
+  disabled: false
+  # used to identify the environment
+  environment: int
+  otlpExporter:
+    # protocol used by the OTLP exporter (http/protobuf or grpc)
+    protocol: http/protobuf
+  # context propagation type
+  propagators: tracecontext
+
+# resources configuration
+resources:
+  requests:
+    cpu: "0m"
+    memory: "0Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+
+edcConnector:
+  # the participant id to be used as assigner in policies as expected by the EDC connector on contract negotiation
+  participantId: provider
+  baseUrl: http://simpl-edc-service:19193

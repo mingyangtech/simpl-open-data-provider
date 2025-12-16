@@ -1,0 +1,82 @@
+appConfig:
+  spring:
+    cloud:
+      gateway:
+        routes:
+          - id: edc
+            uri: http://simpl-edc-service:19194
+            predicates:
+              - Path=/edc/**
+            filters:
+              - StripPrefix=1
+          - id: edc-connector
+            uri: http://edc-connector-adapter:8080
+            predicates:
+              - Path=/edc-connector-adapter/**
+            filters:
+              - StripPrefix=1
+          - id: authentication-provider
+            uri: ${authentication-provider.url}
+            predicates:
+              - Path=/authApi/v1/mtls/**
+            filters:
+              - StripPrefix=1
+          - id: users-roles
+            uri: ${users-roles.url}
+            predicates:
+              - Path=/user-api/mtls/**
+            filters:
+              - StripPrefix=1
+          - id: users-roles-V1
+            uri: ${users-roles.url}
+            predicates:
+              - Path=/userApi/v1/mtls/**
+            filters:
+              - StripPrefix=1
+
+  public-urls:
+    - method: GET
+      path: "/actuator/**"
+    - method: GET
+      path: "/edc/**"
+    - method: POST
+      path: "/edc/**"
+    - method: GET
+      path: "/edc-connector/**"
+    - method: POST
+      path: "/edc-connector/**"
+  abac:
+    - method: POST
+      path: "/user-api/mtls/ephemeral-proof"
+      disable-ephemeral-proof-check: true
+    - method: POST
+      path: "/authApi/v1/mtls/ephemeralProof"
+      disable-ephemeral-proof-check: true
+    - method: POST
+      path: "/edc/**"
+      disable-ephemeral-proof-check: true
+    - method: GET
+      path: "/edc/**"
+      disable-ephemeral-proof-check: true
+    - method: POST
+      path: "/edc-connector/**"
+      disable-ephemeral-proof-check: true
+    - method: GET
+      path: "/edc-connector/**"
+      disable-ephemeral-proof-check: true
+
+    # Example of ABAC
+    # - path: "/this-is-an-example"
+    #   method: GET
+    #   identity-attributes:
+    #     - CONSUMER
+    #     - DATA_PROVIDER
+
+  logging:
+    business:
+      - method: GET
+        path: /user-api/mtls/ping
+        config:
+          operations:
+            - PING_REQUEST
+

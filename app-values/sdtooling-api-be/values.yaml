@@ -1,0 +1,143 @@
+# service port of component SD-Tooling-Api-Be
+creationWizardApiServicePort: 8080
+
+# container port of component SD-Tooling-Api-Be
+creationWizardApiContainerPort: 8080
+
+# specify 'dev' for dev environment or 'dev-int' for integration environment
+vaultEnvIdentifier: dev
+
+# specify 'dev' for dev environment or 'int' for integration environment
+domainUrlEnvIdentifier: dev
+
+# domain associated with Dev Cluster (don't modify it)
+domain: dev.simpl-europe.eu
+
+serviceAccount:
+  name: sdtooling-api-be-service-account
+
+# ID of persistentVolumeClaims associated with NFS Storage
+schemaVolumeClaim: nfs-storage-pvc-sd
+# mount path used for schema storage
+schemaPvcMountPath: /data
+
+# configuration for connectivity between SD-Tooling-Api-Be and SD-Tooling-Api-Validation
+validation:
+  config:
+    enabled: true
+    # domain is the URL of SD-Tooling-Api-Validation service
+    # (sd-creation-wizard-api-validation is name of Kube service associated. Check it!)
+    domain: "http://sd-validation:8080"
+    # name of Validation API Method
+    validationApi: "/validate-ttl"
+    validationJsonldApi: "/validate-jsonld"
+
+web:
+  mvc:
+    cors:
+      # optional allowed origins for cross calls (list separed by comma or * to allow all origins)
+      # if empty no cross calls are allowed
+      allowedOrigins: ""
+      
+    bearerToken:
+      # if true a JWT token must be present as Bearer in any request  
+      required: true
+
+# url to the AuthenticationProvider internal service
+authenticationProvider:
+  service:
+    url: http://authentication-provider:8080
+
+openTelemetry:
+  disabled: false
+
+# federated catalog application (fc-service)
+federatedCatalogue:
+  tier2Gateway:
+    # URI to the tier2 tls gateway of the federated catalog application
+    # tier2 tls gateway path configured as route rule to the federated catalog application
+    pathPrefix: /fc
+
+# configuration for generating hash values
+hash:
+  config:
+    algorithm: "SHA256"
+    templates: '[
+                  {
+                    "key": "Contract Template 1",
+                    "value": "https://files.dev.simpl-europe.eu/static/contract/ContractTemplate1.json"
+                  },
+                  {
+                    "key": "Contract Template 2",
+                    "value": "https://files.dev.simpl-europe.eu/static/contract/ContractTemplate2.json"
+                  },
+                  {
+                    "key": "Contract Template 3",
+                    "value": "https://files.dev.simpl-europe.eu/static/contract/ContractTemplate3.json"
+                  },
+                  {
+                    "key": "Billing Schema 1",
+                    "value": "https://files.dev.simpl-europe.eu/static/pdf/BillingSchema1.pdf"
+                  },
+                  {
+                    "key": "Billing Schema 2",
+                    "value": "https://files.dev.simpl-europe.eu/static/pdf/BillingSchema2.pdf"
+                  },
+                  {
+                    "key": "Billing Schema 3",
+                    "value": "https://files.dev.simpl-europe.eu/static/pdf/BillingSchema1.pdf"
+                  },
+                  {
+                    "key": "Sla Agreements 1",
+                    "value": "https://files.dev.simpl-europe.eu/static/pdf/SLAAgreement1.pdf"
+                  },
+                  {
+                    "key": "Sla Agreements 2",
+                    "value": "https://files.dev.simpl-europe.eu/static/pdf/SLAAgreement2.pdf"
+                  },
+                  {
+                    "key": "Sla Agreements 3",
+                    "value": "https://files.dev.simpl-europe.eu/static/pdf/SLAAgreement1.pdf"
+                  }
+                ]'
+    models: '[
+                {
+                  "hashObj": "contractTemplate",
+                  "hashDoc": "contractTemplateDocument",
+                  "hashAlg": "contractTemplateHashAlg",
+                  "hashValue": "contractTemplateHashValue",
+                  "hashUrl": "contractTemplateURL"
+                },
+                {
+                  "hashObj": "billingSchema",
+                  "hashDoc": "billingSchemaDocument",
+                  "hashAlg": "billingSchemaHashAlg",
+                  "hashValue": "billingSchemaHashValue",
+                  "hashUrl": "billingSchemaURL"
+                },
+                {
+                  "hashObj": "slaAgreements",
+                  "hashDoc": "slaAgreementsDocument",
+                  "hashAlg": "slaAgreementsHashAlg",
+                  "hashValue": "slaAgreementsHashValue",
+                  "hashUrl": "slaAgreementsURL"
+                }
+              ]'
+
+#Configure values of offering type based on shape files name
+offeringType:
+  config:
+    templates: '[
+                  {
+                    "key": "application-offeringShape",
+                    "value": "application"
+                  },
+                  {
+                    "key": "data-offeringShape",
+                    "value": "data"
+                  },
+                  {
+                    "key": "infrastructure-offeringShape",
+                    "value": "infrastructure"
+                  }
+                ]'

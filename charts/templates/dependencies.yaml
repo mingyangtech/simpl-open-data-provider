@@ -1,0 +1,115 @@
+{{- if .Values.crossplane.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.argocd.appname }}-dependencies
+  namespace: {{ .Values.argocd.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+  project: {{ .Values.project }}
+  destination:
+    server: {{ .Values.cluster.address }}
+    namespace: {{ .Values.cluster.namespace }}
+  sources:
+  - repoURL: {{ .Values.values.repo_URL }}
+    targetRevision: {{ .Values.values.branch }}
+    ref: values
+  - repoURL: {{ .Values.crossplane.repo_URL }}
+    targetRevision: {{ .Values.crossplane.targetRevision }}
+    chart: {{ .Values.crossplane.chart_name }}
+    helm:
+      valueFiles:
+        {{- range .Values.crossplane.valueFiles }}
+        - $values/app-values/crossplane/{{ . }}
+        {{- end }}
+      values: |
+        {{- if .Values.crossplane.resourcesCrossplane }}
+        resourcesCrossplane: {{- toYaml .Values.crossplane.resourcesCrossplane | nindent 10 }}
+        {{- end }}
+        {{- if .Values.crossplane.resourcesRBACManager }}
+        resourcesRBACManager: {{- toYaml .Values.crossplane.resourcesRBACManager | nindent 10 }}
+        {{- end }}
+  - repoURL: {{ .Values.gitea.repo_URL }}
+    targetRevision: {{ .Values.gitea.targetRevision }}
+    chart: {{ .Values.gitea.chart_name }}
+    helm:
+      releaseName: {{ .Values.gitea.nameOverride }}
+      valueFiles:
+        {{- range .Values.gitea.valueFiles }}
+        - $values/app-values/gitea/{{ . }}
+        {{- end }}
+      values: |
+        ingress:
+          enabled: true
+          annotations:
+            cert-manager.io/cluster-issuer: {{ .Values.cluster.issuer }}
+          className: nginx
+          hosts:
+            - host: gitea.crossplane.{{ .Values.namespaceTag.dataprovider }}.{{ .Values.domainSuffix }}
+              paths:
+              - path: /
+                pathType: ImplementationSpecific
+          tls:
+            - secretName: gitea-crossplane-tld-secret
+              hosts:
+                - gitea.crossplane.{{ .Values.namespaceTag.dataprovider }}.{{ .Values.domainSuffix }}
+        {{- if .Values.gitea.resources  }}
+        resources: {{- toYaml .Values.gitea.resources | nindent 10 }}
+        {{- end }}
+  - repoURL: {{ .Values.argocd.repo_URL }}
+    targetRevision: {{ .Values.argocd.targetRevision }}
+    chart: {{ .Values.argocd.chart_name }}
+    helm:
+      releaseName: {{ .Values.argocd.nameOverride }}
+      valueFiles:
+        {{- range .Values.argocd.valueFiles }}
+        - $values/app-values/argocd/{{ . }}
+        {{- end }}
+      values: |
+        global:
+          domain: argoui.crossplane.{{ .Values.namespaceTag.dataprovider }}.{{ .Values.domainSuffix }}
+        server:
+          ingress:
+            enabled: true
+            annotations:
+              cert-manager.io/cluster-issuer: {{ .Values.cluster.issuer }}
+            tls: true
+            ingressClassName: nginx
+            pathType: ImplementationSpecific
+        fullnameOverride: {{ .Values.argocd.nameOverride }}
+  - repoURL: {{ .Values.argoevents.repo_URL }}
+    targetRevision: {{ .Values.argoevents.targetRevision }}
+    chart: {{ .Values.argoevents.chart_name }}
+    helm:
+      releaseName: {{ .Values.argoevents.nameOverride }}
+      values: |
+        fullnameOverride: {{ .Values.argoevents.nameOverride }}
+  - repoURL: {{ .Values.argoworkflows.repo_URL }}
+    targetRevision: {{ .Values.argoworkflows.targetRevision }}
+    chart: {{ .Values.argoworkflows.chart_name }}
+    helm:
+      releaseName: {{ .Values.argoworkflows.nameOverride }}
+      values: |
+        server:
+          ingress:
+            enabled: true
+            annotations:
+              cert-manager.io/cluster-issuer: {{ .Values.cluster.issuer }}
+            ingressClassName: nginx
+            hosts:
+              - argoworkflows.crossplane.{{ .Values.namespaceTag.dataprovider }}.{{ .Values.domainSuffix }}
+            paths:
+              - /
+            pathType: ImplementationSpecific
+            tls:
+              - secretName: argowf-crossplane-tld-secret
+                hosts:
+                  - argoworkflows.crossplane.{{ .Values.namespaceTag.dataprovider }}.{{ .Values.domainSuffix }}
+        fullnameOverride: {{ .Values.argoworkflows.nameOverride }}
+{{- end }}

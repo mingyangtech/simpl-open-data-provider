@@ -1,0 +1,331 @@
+values:
+  repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/data-provider.git
+  branch: v2.0.3
+
+project: ${PROJECT}
+domainSuffix: ${DOMAINSUFFIX}
+namespaceTag:
+  dataprovider: ${NAMESPACETAG}
+  authority: ${AUTHNAMESPACETAG}
+  common: ${COMMONSPACETAG}
+
+argocd:
+  appname: ${NAMESPACE}
+  namespace: argocd
+
+authority:
+  namespaceTag: ${AUTHNAMESPACETAG}
+
+cluster:
+  address: https://kubernetes.default.svc
+  namespace: ${NAMESPACE}
+  commonToolsNamespace: ${COMMONNAMESPACE}
+  issuer: ${CLUSTERISSUER}
+
+hashicorp:
+  service: "https://vault.common.domainsuffix"
+  secretEngine: ${SECRETENGINE}
+  role: ${SECRETROLE}
+
+crossplane:
+  enabled: false
+  repo_URL: https://charts.crossplane.io/stable
+  targetRevision: 1.16.2
+  chart_name: crossplane
+  kafka:
+    username: user
+    password: pass
+  gitea:
+    username: user
+    password: pass
+  ionos:
+    token: "tokenstring"
+  resourcesCrossplane:
+    requests:
+      cpu: "0"
+      memory: "0"
+  resourcesRBACManager:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+
+keycloak:
+  repo_URL: https://charts.bitnami.com/bitnami
+  chart_name: keycloak
+  targetRevision: 22.2.5
+  nameOverride: keycloak
+  resourcesPreset: "none"
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+    
+signer:
+  enabled: true
+  projectID: "954"
+  targetRevision: 0.0.4
+  chart_name: signer
+  serviceAccountName: signer-service-account
+  valueFiles:
+    - values.yaml
+
+tier1_gateway:
+  projectID: "772"
+  targetRevision: 1.5.0
+  chart_name: tier1-gateway
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+
+sdtooling_api_be:
+  enabled: true
+  projectID: "778"
+  targetRevision: 1.10.1
+  chart_name: sd-creation-wizard
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+  nameOverride: sd
+
+sdtooling_validation_api_be:
+  enabled: true
+  projectID: "868"
+  targetRevision: 1.9.1
+  chart_name: sd-creation-wizard
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+  nameOverride: sd-validation
+
+xfsc_advsearch_be:
+  enabled:  true
+  projectID: "891"
+  targetRevision: 1.9.1
+  chart_name: xsfc-advsearch
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+  nameOverride: xfsc-advsearch-be
+
+users_roles:
+  projectID: "771"
+  targetRevision: 1.5.0
+  chart_name: users-roles
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+
+simpl_fe:
+  projectID: "769"
+  targetRevision: 1.5.4
+  chart_name: simpl-fe
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+    - values-participant.yaml
+
+sd_ui:
+  enabled: true
+  projectID: "923"
+  targetRevision: 1.1.1
+  chart_name: sd-ui
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+
+infrastructure_be:
+  projectID: "896"
+  targetRevision: 0.2.8-887.hotfix.1bc15fca
+  chart_name: infrastructure-be
+  fullnameOverride: infrastructure-be
+  valueFiles:
+    - values.yaml
+
+infrastructure_fe:
+  projectID: "895"
+  targetRevision: 0.2.3
+  chart_name: frontend
+  fullnameOverride: infrastructure-fe
+  valueFiles:
+    - values.yaml
+
+tier2_gateway:
+  projectID: "860"
+  targetRevision: 1.5.0
+  chart_name: tier2-gateway
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+    - values-routes.yaml
+
+simpl_edc:
+  enabled:  true
+  projectID: "920"
+  targetRevision: 1.0.5
+  chart_name: edc
+  nameOverride: simpl-edc
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+    - values-provider.yaml
+
+
+edc_connector_adapter:
+  enabled:  true
+  projectID: "1091"
+  targetRevision: 1.1.2
+  chart_name: edc-connector-adapter
+  nameOverride: edc-connector-adapter
+  valueFiles:
+    - values.yaml
+
+simpl_catalogue_client:
+  enabled: true
+  projectID: "937"
+  targetRevision: 1.2.0
+  chart_name: catalogue-ui
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+
+auth_provider:
+  projectID: "939"
+  targetRevision: 1.5.0
+  chart_name: authentication-provider
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+
+monitoring:
+  enabled: true
+  projectID: "828"
+  targetRevision: 0.1.14
+  chart_name: eck-monitoring
+  fullnameOverride: elastic
+  valueFiles:
+    - values.yaml
+
+contract:
+  projectID: "872"
+  targetRevision: 1.0.4
+  chart_name: simpl-contract
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml   
+  fullnameOverride: contract-dataprovider 
+
+stubs:
+  projectID: "930"
+  targetRevision: 1.0.3
+  chart_name: simpl-stubs
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml  
+
+files:
+  enabled:  true
+  projectID: "978"
+  targetRevision: 1.0.0
+  chart_name: simpl-files
+  nameOverride: simpl-files
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+
+gitea:
+  repo_URL: https://dl.gitea.com/charts
+  targetRevision: 10.4.1
+  chart_name: gitea
+  nameOverride: gitea
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+
+argocd:
+  repo_URL: https://argoproj.github.io/argo-helm
+  targetRevision: 6.7.13
+  chart_name: argo-cd
+  nameOverride: infrastructure-argo-cd
+  valueFiles:
+    - values.yaml
+
+argoevents:
+  repo_URL: https://argoproj.github.io/argo-helm
+  targetRevision: 2.4.8
+  chart_name: argo-events
+  nameOverride: infrastructure-argo-events
+  valueFiles:
+    - values.yaml
+
+argoworkflows:
+  repo_URL: https://argoproj.github.io/argo-helm
+  targetRevision: 0.42.5
+  chart_name: argo-workflows
+  nameOverride: infrastructure-argo-workflows
+  valueFiles:
+    - values.yaml
+
+provisionerresources:
+  projectID: "912"
+  targetRevision: 0.1.2
+  chart_name: infrastructure-crossplane
+  nameOverride: infrastructure-crossplane
+  valueFiles:
+    - values.yaml
+
+simpl_cli:
+  projectID: "882"
+  targetRevision: 1.5.0
+  chart_name: simpl-cli
+  fullnameOverride: simpl-cli
+  valueFiles:
+    - values.yaml

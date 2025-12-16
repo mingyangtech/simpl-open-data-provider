@@ -1,0 +1,33 @@
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1001
+
+envFrom:
+  - configMapRef:
+      name: simpl-cli-configmap
+
+initParticipant:
+  enabled: true
+  ptype: DATA_PROVIDER
+  csr:
+    country: EU
+  keycloak:
+    internalPort: 80
+    app:
+      realm: participant
+      clientId: cli
+    master:
+      realm: master
+      user: admin
+      password: admin
+      clientId: admin-cli
+    authority:
+      user: admin
+      password: admin
+      realm: authority
+initAuthority:
+  enabled: false
